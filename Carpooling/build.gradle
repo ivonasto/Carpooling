@@ -39,6 +39,11 @@ dependencies {
     implementation group: 'com.cloudinary', name: 'cloudinary-http44', version: '1.37.0'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
     implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    implementation 'com.yubico:webauthn-server-core:2.5.2'
+    testImplementation 'org.springframework.security:spring-security-test:6.3.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
 tasks.named('test') {
