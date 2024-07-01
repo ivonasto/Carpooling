@@ -28,8 +28,8 @@ public class WebSecurityConfig {
         // configure url authorization rules
         http.authorizeHttpRequests().requestMatchers(
                         mvc.pattern("/"),
-                        mvc.pattern("/auth/register"),
-                        mvc.pattern("/auth/login"))
+                        mvc.pattern("/register"),
+                        mvc.pattern("/login"))
                 .permitAll()
                 .requestMatchers("/images/**", "/fonts/**", "/css/**", "/js/**")
                 .permitAll()

@@ -18,28 +18,29 @@
                                 <div class="offset-lg-1 col-lg-7 col-md-8">
                                     <div class="cola-form">
                                         <h4><i class="flaticon-sign-in"></i>Register:</h4>
-                                        <form id="registerForm">
+                                        <form method="POST" action="#" th:action="@{/auth/register}"
+                                              th:object="${register}">
                                             <label>first Name:</label>
-                                            <input type="text" id="firstName">
-                                            <label class="error" style="margin-bottom: 30px" id="f-name-err"></label>
+                                            <input type="text" th:field="*{firstName}">
+                                            <label class="error" style="margin-bottom: 30px" id="f-name-err" th:errors="*{firstName}"></label>
                                             <label>last name:</label>
-                                            <input type="text" id="lastName">
-                                            <label class="error" style="margin-bottom: 30px" id="l-name-err" ></label>
+                                            <input type="text" th:field="*{lastName}">
+                                            <label class="error" style="margin-bottom: 30px" id="l-name-err" th:errors="*{lastName}"></label>
                                             <label>username:</label>
-                                            <input type="text" id="username">
-                                            <label class="error" id="username-err" ></label>
+                                            <input type="text" th:field="*{username}">
+                                            <label class="error" id="username-err" th:errors="*{username}"></label>
                                             <label>email:</label>
-                                            <input type="email" id="email">
-                                            <label class="error" style="margin-bottom: 30px" id="email-err"></label>
+                                            <input type="text" th:field="*{email}">
+                                            <label class="error" style="margin-bottom: 30px" id="email-err" th:errors="*{email}"></label>
                                             <label>phone number:</label>
-                                            <input type="text" id="phoneNumber">
-                                            <label class="error" id="p-number-err" ></label>
+                                            <input type="text" th:field="*{phoneNumber}">
+                                            <label class="error" id="p-number-err" th:errors="*{phoneNumber}"></label>
                                             <label>password:</label>
-                                            <input type="password" id="password">
-                                            <label class="error" style="margin-bottom: 30px" id="password-err" ></label>
+                                            <input type="password" th:field="*{password}">
+                                            <label class="error" style="margin-bottom: 30px" id="password-err" th:errors="*{password}"></label>
                                             <label>confirm password:</label>
-                                            <input type="password" id="passwordConfirm">
-                                            <label class="error" style="margin-bottom: 30px" id="password-confirm-err" ></label>
+                                            <input type="password" th:field="*{passwordConfirm}">
+                                            <label class="error" style="margin-bottom: 30px" id="password-confirm-err" th:errors="*{passwordConfirm}"></label>
                                             <button type="submit" class="theme-btn">register</button>
                                         </form>
                                         <span>Are you a member already? <a href="LoginView.html" th:href="@{/auth/login}" title="">Login here</a></span>
@@ -122,24 +123,6 @@
 
 <script src="/js/apps.min.js"></script>
 <script src="/js/script.js"></script>
-<script>
-
-
-    $(document).ready(function () {
-        $("#registerForm").submit(function (event) {
-            const formData = {
-                firstName: $("#firstName").val(),
-                lastName: $("#lastName").val(),
-
-            };
-            startRegistration(formData);
-            event.preventDefault();
-        });
-    });
-
-
-
-</script>
 
 </body>
 </html>
