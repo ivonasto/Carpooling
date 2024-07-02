@@ -18,6 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 
 @AllArgsConstructor
 @Controller
@@ -70,33 +73,33 @@ public class AuthenticationMvcController {
     }
 
     @GetMapping("/register")
-    public String showRegisterPage (Model model) {
-        model.addAttribute("register", new RegisterDto());
+    public String showRegisterPage () {
         return "RegisterView";
     }
 
     @PostMapping("/register")
-    public String handleRegister(@Valid @ModelAttribute("register") RegisterDto register,
+
+    public ResponseEntity<Map<String, String>> handleRegister(@Valid @RequestBody RegisterDto register,
                                  BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                System.out.println("Message: " + error.getDefaultMessage());
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            if(!register.getPassword().equals(register.getPasswordConfirm())) {
+                bindingResult.rejectValue("passwordConfirm", "password_error", PASSWORD_CONFIRMATION_ERROR);
             }
-            return "RegisterView";
-        }
-        if(!register.getPassword().equals(register.getPasswordConfirm())) {
-            bindingResult.rejectValue("passwordConfirm", "password_error", PASSWORD_CONFIRMATION_ERROR);
-            return "RegisterView";
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.put(error.getField(), error.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errors);
         }
 
         try {
             User user = userMapper.fromDtoRegister(register);
             userService.create(user);
             authenticationHelper.verifyAuthentication(register.getEmail(), register.getPassword());
-            return "redirect:/auth/verify";
+            return ResponseEntity.ok().body(Map.of("message", "Registration successful"));
         } catch (EntityDuplicateException e) {
             bindingResult.rejectValue("username", "username_error", e.getMessage());
-            return "RegisterView";
+            return ResponseEntity.badRequest().body(Map.of("message","Username exists already!"));
         }
     }
 

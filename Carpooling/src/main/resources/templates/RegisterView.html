@@ -6,7 +6,7 @@
     <div th:replace="~{fragments/PageForm :: header-top}"></div>
     <!-- topbar -->
     <div th:replace="~{fragments/PageForm :: topbar}"></div>
-   <!-- subhead -->
+    <!-- subhead -->
 
     <section>
         <div class="space">
@@ -18,32 +18,32 @@
                                 <div class="offset-lg-1 col-lg-7 col-md-8">
                                     <div class="cola-form">
                                         <h4><i class="flaticon-sign-in"></i>Register:</h4>
-                                        <form method="POST" action="#" th:action="@{/auth/register}"
-                                              th:object="${register}">
+                                        <form id="registerForm">
                                             <label>first Name:</label>
-                                            <input type="text" th:field="*{firstName}">
-                                            <label class="error" style="margin-bottom: 30px" id="f-name-err" th:errors="*{firstName}"></label>
+                                            <input type="text" id="firstName">
+                                            <div class="error" style="margin-bottom: 30px" id="f-name-err"></div>
                                             <label>last name:</label>
-                                            <input type="text" th:field="*{lastName}">
-                                            <label class="error" style="margin-bottom: 30px" id="l-name-err" th:errors="*{lastName}"></label>
+                                            <input type="text" id="lastName">
+                                            <div class="error" style="margin-bottom: 30px" id="l-name-err"></div>
                                             <label>username:</label>
-                                            <input type="text" th:field="*{username}">
-                                            <label class="error" id="username-err" th:errors="*{username}"></label>
+                                            <input type="text" id="username">
+                                            <div class="error" id="username-err"></div>
                                             <label>email:</label>
-                                            <input type="text" th:field="*{email}">
-                                            <label class="error" style="margin-bottom: 30px" id="email-err" th:errors="*{email}"></label>
+                                            <input type="text" id="email">
+                                            <div class="error" style="margin-bottom: 30px" id="email-err"></div>
                                             <label>phone number:</label>
-                                            <input type="text" th:field="*{phoneNumber}">
-                                            <label class="error" id="p-number-err" th:errors="*{phoneNumber}"></label>
+                                            <input type="text" id="phoneNumber">
+                                            <div class="error" id="p-number-err"></div>
                                             <label>password:</label>
-                                            <input type="password" th:field="*{password}">
-                                            <label class="error" style="margin-bottom: 30px" id="password-err" th:errors="*{password}"></label>
+                                            <input type="password" id="password">
+                                            <div class="error" style="margin-bottom: 30px" id="password-err"></div>
                                             <label>confirm password:</label>
-                                            <input type="password" th:field="*{passwordConfirm}">
-                                            <label class="error" style="margin-bottom: 30px" id="password-confirm-err" th:errors="*{passwordConfirm}"></label>
+                                            <input type="password" id="passwordConfirm">
+                                            <div class="error" style="margin-bottom: 30px"
+                                                 id="password-confirm-err"></div>
                                             <button type="submit" class="theme-btn">register</button>
                                         </form>
-                                        <span>Are you a member already? <a href="LoginView.html" th:href="@{/auth/login}" title="">Login here</a></span>
+                                        <span>Are you a member already? <a href="LoginView.html" title="">Login here</a></span>
                                     </div>
                                 </div>
                             </div>
@@ -64,7 +64,8 @@
                     <div class="widget">
                         <a href="index.html" title=""><img src="images/logo-black.png" alt=""></a>
                         <p>
-                            The trio took this simple idea and built it into the world’s leading carpooling platform, connecting millions of people going the same way.
+                            The trio took this simple idea and built it into the world’s leading carpooling platform,
+                            connecting millions of people going the same way.
                         </p>
                         <ul class="social">
                             <li><a href="#" title="" class="facebook"><i class="fa fa-facebook"></i></a></li>
@@ -88,7 +89,8 @@
                     <div class="widget">
                         <div class="widget-title"><h4>weekly news letter</h4></div>
                         <div class="news-letter">
-                            <p>We may send you information about related events, webinars, products and services which we believe.</p>
+                            <p>We may send you information about related events, webinars, products and services which
+                                we believe.</p>
                             <form method="post">
                                 <input type="text" placeholder="Enter your email address">
                                 <button type="submit"><i class="fa fa-paper-plane-o"></i></button>
@@ -123,6 +125,75 @@
 
 <script src="/js/apps.min.js"></script>
 <script src="/js/script.js"></script>
+
+
+<script>
+
+    /**
+     * Read the values from the form on the page and then call the server, to
+     * get a configuration settings to use when calling the WebAuthentication
+     * API
+     */
+    $(document).ready(function () {
+        $("#registerForm").submit(function (event) {
+            console.log('It works');
+            event.preventDefault();
+            const formData = {
+                firstName: $("#firstName").val(),
+                lastName: $("#lastName").val(),
+                username: $("#username").val(),
+                email: $("#email").val(),
+                phoneNumber: $("#phoneNumber").val(),
+                password: $("#password").val(),
+                passwordConfirm: $("#passwordConfirm").val()
+            };
+            console.log(formData);
+            if (!formData.password === formData.passwordConfirm) {
+                $("#password-confirm-err").text("Passwords do not match.");
+                return;
+            }
+            register(formData);
+
+        });
+    });
+
+    function register(formData) {
+        $.ajax({
+            type: "POST",
+            url: "/auth/register",
+            data: JSON.stringify(formData),
+            dataType: "json",
+            contentType: "application/json",
+            beforeSend: function (xhr) {
+                // spring security has CSRF protection turned on, if we don't
+                // set the correct CSRF header and value spring security will
+                // block the request from getting to the Spring MVC controller
+                // that will process this request.
+                const token = $("meta[name='_csrf']").attr("content")
+                const header = $("meta[name='_csrf_header']").attr("content")
+                console.log(token);
+                console.log(header);
+                xhr.setRequestHeader(header, token)
+            },
+            success: function (data, textStatus, jqXHR) {
+
+
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON;
+                if (errors.firstName) $("#f-name-err").text(errors.firstName);
+                if (errors.lastName) $("#l-name-err").text(errors.lastName);
+                if (errors.username) $("#username-err").text(errors.username);
+                if (errors.email) $("#email-err").text(errors.email);
+                if (errors.phoneNumber) $("#p-number-err").text(errors.phoneNumber);
+                if (errors.password) $("#password-err").text(errors.password);
+                if (errors.passwordConfirm) $("#password-confirm-err").text(errors.passwordConfirm);
+            }
+        });
+    }
+
+
+</script>
 
 </body>
 </html>
